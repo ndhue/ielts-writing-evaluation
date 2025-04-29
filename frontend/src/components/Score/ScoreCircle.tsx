@@ -1,24 +1,52 @@
 "use client";
 
-import { cn } from "@/utils/cn";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   CircularProgressbarWithChildren,
   buildStyles,
 } from "react-circular-progressbar";
+import { cn } from "@/utils/cn";
 
 interface ScoreCircleProps {
   score: number;
   circleClassName?: string;
   textClassName?: string;
+  animationDuration?: number; // in ms
+  animate?: boolean; // control whether score should animate
 }
 
 export default function ScoreCircle({
   score,
   circleClassName,
   textClassName,
+  animationDuration = 1000,
+  animate = true,
 }: ScoreCircleProps) {
-  const percentage = (score / 9) * 100;
+  const [displayedScore, setDisplayedScore] = useState(animate ? 0 : score);
+
+  useEffect(() => {
+    if (!animate) {
+      setDisplayedScore(score);
+      return;
+    }
+
+    let start: number | null = null;
+
+    const animateScore = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = timestamp - start;
+      const percentage = Math.min(progress / animationDuration, 1);
+      setDisplayedScore(Number((score * percentage).toFixed(2)));
+
+      if (percentage < 1) {
+        requestAnimationFrame(animateScore);
+      }
+    };
+
+    requestAnimationFrame(animateScore);
+  }, [score, animationDuration, animate]);
+
+  const percentage = (displayedScore / 9) * 100;
 
   return (
     <div className="flex flex-col gap-2">
@@ -49,9 +77,9 @@ export default function ScoreCircle({
           </svg>
           <div className="text-center">
             <div className="text-5xl font-bold text-slate-800">
-              {score.toFixed(1)}
+              {displayedScore.toFixed(1)}
             </div>
-            <div className="text-xs text-slate-400">(0–9)</div>
+            <div className="text-xs text-slate-400">(0-9)</div>
           </div>
         </CircularProgressbarWithChildren>
       </div>

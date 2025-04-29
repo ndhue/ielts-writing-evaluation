@@ -17,3 +17,8 @@ export { default as WarningIcon } from "./WarningIcon";
 export { default as ErrorIcon } from "./ErrorIcon";
 export { default as InfoIcon } from "./InfoIcon";
 export { default as CirclingSVG } from "./CircilingSVG";
+export { default as MagicCrystalIcon } from "./MagicCrystalIcon";
+export { default as MagicianIcon } from "./MagicianIcon";
+export { default as ManaIcon } from "./ManaIcon";
+export { default as WizardIcon } from "./WizardIcon";
+export { default as CauldronIcon } from "./CauldronIcon";

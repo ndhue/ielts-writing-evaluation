@@ -41,6 +41,8 @@
   --color-info-100: #CDE8F6;
 
   --color-border: #C4C4C4;
+
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
 @theme inline {
