@@ -44,7 +44,7 @@ const titleMap = {
 
 const CustomToast = ({ type, message }: CustomToastProps) => {
   return (
-    <div className={`flex items-center p-4 rounded-md ${bgColors[type]} gap-3`}>
+    <div className={`flex items-center w-full p-4 rounded-md ${bgColors[type]} gap-3`}>
       {iconMap[type]}
       <div>
         <div className={`font-bold text-base ${titleColors[type]}`}>

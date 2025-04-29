@@ -39,6 +39,8 @@
   --color-info-600: #37729B;
   --color-info-500: #789BB9;
   --color-info-100: #CDE8F6;
+
+  --color-border: #C4C4C4;
 }
 
 @theme inline {
@@ -56,7 +58,5 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
