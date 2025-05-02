@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { FLOAT } = require('sequelize');
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password_hash:{type: String},

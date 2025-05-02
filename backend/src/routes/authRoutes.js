@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 const { register,confirmRegister,forgotPassword,resetPassword, login,googleLoginCallback, refreshToken, logout } = require('../controllers/authController');
-const { updateProfile} = require('../controllers/profileController');
+const { updateProfile, changePassword} = require('../controllers/profileController');
 const { authenticateToken } = require('../middleware/auth');
 
 
@@ -17,13 +17,7 @@ router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/', session: false }),
   googleLoginCallback
 );
-
-
-
-
-
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
-
 router.get('/github/callback',
   passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => res.redirect('/dashboard')
@@ -31,4 +25,5 @@ router.get('/github/callback',
 router.post('/refresh-token', refreshToken);
 router.post('/logout', logout);
 router.patch('/update-profile', authenticateToken, updateProfile);
+router.put('/change-password',authenticateToken,changePassword);
 module.exports = router;

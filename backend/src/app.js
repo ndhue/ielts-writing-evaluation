@@ -5,6 +5,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const authRoutes = require('./routes/authRoutes');
+const topicRoutes = require('./routes/topicRoutes');
 const cors = require('cors');
 require('./config/passport');
 
@@ -32,6 +33,6 @@ app.use(passport.session());
 app.use(cookieParser());
 
 app.use('/auth', authRoutes);
-
+app.use('/', topicRoutes);
 
 app.listen(3000, () => console.log('Server listening on http://localhost:3000'));
