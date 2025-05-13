@@ -1,4 +1,4 @@
-import { MainTitle, ScoreBox, WritingForm } from "@/pages/home";
+import { MainTitle, ScoreBox, WritingForm } from "@/ui/home";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
