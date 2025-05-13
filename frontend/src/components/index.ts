@@ -4,3 +4,5 @@ export * from "./Chip";
 export * from "./Input";
 export * from "./Score";
 export * from "./Loading";
+export * from "./Textarea";
+export * from "./Sidebar";

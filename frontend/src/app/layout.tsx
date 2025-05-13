@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Poppins } from "next/font/google";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "react-circular-progressbar/dist/styles.css";
+import { Sidebar } from "@/components";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,15 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={poppins.className}>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        
-        closeOnClick
-        draggable
-        pauseOnHover
-      />
-      <body>{children}</body>
+      <body>
+        <Sidebar />
+        <section className="ml-28 mt-8 mr-8">{children}</section>
+      </body>
     </html>
   );
 }

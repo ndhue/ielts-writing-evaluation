@@ -10,7 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string;
 }
 const buttonClsx =
-  "button min-h-[32px] text-sm font-semibold px-4 py-2.5 flex items-center justify-center gap-x-[6px] rounded-[10px] transition-all duration-300 cursor-pointer";
+  "button min-h-[32px] text-sm px-2.5 py-1.5 flex items-center justify-center gap-x-[6px] rounded-full transition-all duration-300 cursor-pointer";
 
 const Button = forwardRef(
   (
@@ -33,14 +33,15 @@ const Button = forwardRef(
     const checkClassByType = () => {
       const baseClasses = {
         primary:
-          "border-2 border-purple-600 text-white bg-purple-600 hover:bg-purple-500",
-        secondary: "border-2 border-purple-600 bg-white text-purple-600 hover:bg-purple-50",
+          "border-2 border-purple-500 text-white bg-purple-500 hover:bg-purple-400",
+        secondary:
+          "border-2 border-purple-600 bg-white text-purple-600 hover:bg-purple-50",
         danger: "text-white",
         icon: "flex items-center justify-center min-h-[24px] min-w-[24px] p-[1px] border",
       };
       const disabledClasses = {
-        primary: "cursor-not-allowed bg-blue-100",
-        secondary: "cursor-not-allowed border-blue-100 text-slate-200",
+        primary: "cursor-not-allowed bg-purple-100",
+        secondary: "cursor-not-allowed border-purple-100 text-purple-200",
         danger: "cursor-not-allowed bg-red-100",
         icon: "cursor-not-allowed bg-slate-300 text-white",
       };
