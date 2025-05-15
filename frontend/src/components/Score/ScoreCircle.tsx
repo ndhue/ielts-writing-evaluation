@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CircularProgressbarWithChildren,
   buildStyles,
@@ -11,6 +11,7 @@ interface ScoreCircleProps {
   score: number;
   circleClassName?: string;
   textClassName?: string;
+  scoreClassName?: string;
   animationDuration?: number; // in ms
   animate?: boolean; // control whether score should animate
 }
@@ -19,6 +20,7 @@ export default function ScoreCircle({
   score,
   circleClassName,
   textClassName,
+  scoreClassName,
   animationDuration = 1000,
   animate = true,
 }: ScoreCircleProps) {
@@ -55,13 +57,13 @@ export default function ScoreCircle({
       </p>
       <div
         className={cn(
-          "w-40 h-40 flex flex-col items-center justify-center",
+          "size-40 flex flex-col items-center justify-center",
           circleClassName
         )}
       >
         <CircularProgressbarWithChildren
           value={percentage}
-          strokeWidth={8}
+          strokeWidth={10}
           styles={buildStyles({
             pathColor: "url(#gradient)",
             trailColor: "#eee",
@@ -76,7 +78,12 @@ export default function ScoreCircle({
             </defs>
           </svg>
           <div className="text-center">
-            <div className="text-5xl font-bold text-slate-800">
+            <div
+              className={cn(
+                "text-5xl font-bold text-slate-800",
+                scoreClassName
+              )}
+            >
               {displayedScore.toFixed(1)}
             </div>
             <div className="text-xs text-slate-400">(0-9)</div>

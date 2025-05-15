@@ -8,7 +8,7 @@ import { cn } from "@/utils/cn";
 import { usePathname } from "next/navigation";
 
 const Siderbar = () => {
-  const pathname = usePathname() || '';
+  const pathname = usePathname() || "";
 
   const isTopicsActive = pathname.includes("/topics");
   const isEvaluationActive = pathname.includes("/evaluations");
@@ -31,24 +31,23 @@ const Siderbar = () => {
         />
       </Link>
       <div className="flex flex-col gap-8 items-center mt-8">
-        <Link href="/topics" className={menuItemClass(isTopicsActive)}>
-          <DocumentIcon
-            className={cn("size-7", {
-              "text-purple-500": isTopicsActive,
-            })}
-          />
-          <p className="text-xs">Topics</p>
-        </Link>
         <Link href="/evaluations" className={menuItemClass(isEvaluationActive)}>
-          <HistoricalIcon
+          <DocumentIcon
             className={cn("size-7", {
               "text-purple-500": isEvaluationActive,
             })}
           />
           <p className="text-xs">Feedbacks</p>
         </Link>
+        <Link href="/topics" className={menuItemClass(isTopicsActive)}>
+          <HistoricalIcon
+            className={cn("size-7", {
+              "text-purple-500": isTopicsActive,
+            })}
+          />
+          <p className="text-xs">Topics</p>
+        </Link>
       </div>
-
       {/* Logout at bottom */}
       <button
         onClick={() => {
