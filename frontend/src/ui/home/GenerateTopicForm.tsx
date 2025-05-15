@@ -1,6 +1,6 @@
 "use client";
 
-import { commonTopics, commonTypes } from "@/app/const/ielts-const";
+import { commonTopics, commonTypes } from "@/const/ielts-const";
 import { Button, Chip, Input, Textarea } from "@/components";
 import { CopyIcon, SearchIcon } from "@/components/icons";
 import { useShowNoti } from "@/hooks";

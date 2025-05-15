@@ -1,66 +1,98 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { DocumentIcon, HistoricalIcon } from "../icons";
-import LogoutIcon from "../icons/LogoutIcon";
-import { cn } from "@/utils/cn";
 import { usePathname } from "next/navigation";
+import { cn } from "@/utils/cn";
+import { DocumentIcon, HistoricalIcon, UserIcon } from "../icons";
+import LogoutIcon from "../icons/LogoutIcon";
+import React from "react";
 
-const Siderbar = () => {
+const navItems = [
+  {
+    label: "Feedbacks",
+    href: "/evaluations",
+    Icon: DocumentIcon,
+    matchPath: "/evaluations",
+  },
+  {
+    label: "Topics",
+    href: "/topics",
+    Icon: HistoricalIcon,
+    matchPath: "/topics",
+  },
+  {
+    label: "Profile",
+    href: "/profile",
+    Icon: UserIcon,
+    matchPath: "/profile",
+    position: "bottom",
+  },
+];
+
+const Sidebar = () => {
   const pathname = usePathname() || "";
 
-  const isTopicsActive = pathname.includes("/topics");
-  const isEvaluationActive = pathname.includes("/evaluations");
+  const renderNavItem = ({
+    label,
+    href,
+    Icon,
+    matchPath,
+  }: (typeof navItems)[number]) => {
+    const isActive = pathname.includes(matchPath);
 
-  const menuItemClass = (isActive: boolean) =>
-    cn("flex flex-col items-center gap-1", {
-      "text-purple-500 font-medium": isActive,
-      "text-purple-50": !isActive,
-    });
+    return (
+      <Link
+        key={href}
+        href={href}
+        className={cn("flex flex-col items-center gap-1", {
+          "text-purple-500 font-medium": isActive,
+          "text-purple-50": !isActive,
+        })}
+      >
+        <Icon className={cn("size-7", { "text-purple-500": isActive })} />
+        <p className="text-xs">{label}</p>
+      </Link>
+    );
+  };
 
   return (
     <section className="fixed top-0 h-screen bg-background w-20 py-8 flex flex-col items-center">
       <Link href="/" className="cursor-pointer">
         <Image
-          src={"/icon.png"}
+          src="/icon.png"
           alt="logo"
           width={50}
           height={50}
           className="rounded-md"
         />
       </Link>
+
+      {/* Top nav items */}
       <div className="flex flex-col gap-8 items-center mt-8">
-        <Link href="/evaluations" className={menuItemClass(isEvaluationActive)}>
-          <DocumentIcon
-            className={cn("size-7", {
-              "text-purple-500": isEvaluationActive,
-            })}
-          />
-          <p className="text-xs">Feedbacks</p>
-        </Link>
-        <Link href="/topics" className={menuItemClass(isTopicsActive)}>
-          <HistoricalIcon
-            className={cn("size-7", {
-              "text-purple-500": isTopicsActive,
-            })}
-          />
-          <p className="text-xs">Topics</p>
-        </Link>
+        {navItems
+          .filter((item) => item.position !== "bottom")
+          .map(renderNavItem)}
       </div>
-      {/* Logout at bottom */}
-      <button
-        onClick={() => {
-          // Add logout functionality here
-          console.log("Logging out...");
-        }}
-        className="mt-auto flex flex-col items-center gap-1 text-purple-50 hover:text-purple-500 transition-colors cursor-pointer"
-      >
-        <LogoutIcon className="size-6" />
-        <p className="text-xs">Logout</p>
-      </button>
+
+      {/* Bottom nav items */}
+      <div className="mt-auto flex flex-col gap-4 items-center">
+        {navItems
+          .filter((item) => item.position === "bottom")
+          .map(renderNavItem)}
+
+        <div
+          onClick={() => {
+            console.log("Logging out...");
+          }}
+          className="flex flex-col items-center gap-1 text-purple-50 hover:text-purple-500 transition-colors cursor-pointer"
+        >
+          <LogoutIcon className="size-6" />
+          <p className="text-xs">Logout</p>
+        </div>
+      </div>
     </section>
   );
 };
 
-export default Siderbar;
+export default Sidebar;

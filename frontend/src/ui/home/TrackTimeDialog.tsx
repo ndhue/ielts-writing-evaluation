@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components";
-import { ClockIcon } from "@/components/icons";
+import { ClockIcon, RefreshIcon, PlayIcon } from "@/components/icons";
 import { useDisclosure, useShowNoti } from "@/hooks";
 import { cn } from "@/utils/cn";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +20,7 @@ const TrackTimeDialog = () => {
     elapsedTime: 0,
   });
   const [currentTime, setCurrentTime] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Close when clicking outside the dialog
   useEffect(() => {
@@ -60,6 +61,7 @@ const TrackTimeDialog = () => {
         ? timer.elapsedTime + (Date.now() - timer.startTime)
         : timer.elapsedTime,
     });
+    setIsPaused(false);
     onClose();
   };
 
@@ -69,6 +71,26 @@ const TrackTimeDialog = () => {
       isRunning: false,
       elapsedTime: prev.elapsedTime + (Date.now() - prev.startTime),
     }));
+    setIsPaused(true);
+  };
+
+  const continueTimer = () => {
+    setTimer((prev) => ({
+      ...prev,
+      isRunning: true,
+      startTime: Date.now(),
+    }));
+    setIsPaused(false);
+  };
+
+  const resetTimer = () => {
+    setTimer({
+      duration: 0,
+      isRunning: false,
+      startTime: 0,
+      elapsedTime: 0,
+    });
+    setIsPaused(false);
   };
 
   const formatTime = (timeInSeconds: number) => {
@@ -145,15 +167,32 @@ const TrackTimeDialog = () => {
           variant="icon"
           label={displayTime || "Stop"}
           onClick={stopTimer}
-          className="border-none bg-red-500 text-purple-50 px-2.5 py-1.5 rounded-full hover:bg-red-600 w-30"
+          className="border-none bg-red-500 text-purple-50 py-1.5 rounded-full hover:bg-red-600 w-29"
           key={currentTime}
         />
+      ) : isPaused ? (
+        <div className="flex gap-2">
+          <Button
+            variant="icon"
+            icon={<PlayIcon />}
+            label="Continue"
+            onClick={continueTimer}
+            className="border-none bg-green-600 text-purple-50 py-1.5 rounded-full hover:bg-green-500 w-29"
+          />
+          <Button
+            variant="icon"
+            icon={<RefreshIcon />}
+            label="Reset"
+            onClick={resetTimer}
+            className="border-none bg-purple-600 text-purple-50 px-2.5 py-1.5 rounded-full hover:bg-purple-500"
+          />
+        </div>
       ) : (
         <Button
           variant="icon"
           icon={<ClockIcon />}
           label={displayTime || "Track time"}
-          className="border-none bg-purple-600 text-purple-50 px-2.5 py-1.5 rounded-full hover:bg-purple-500 w-30"
+          className="border-none bg-purple-600 text-purple-50 py-1.5 rounded-full hover:bg-purple-500 w-29"
           onClick={onOpen}
         />
       )}

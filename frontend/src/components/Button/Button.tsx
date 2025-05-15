@@ -33,7 +33,7 @@ const Button = forwardRef(
     const checkClassByType = () => {
       const baseClasses = {
         primary:
-          "border border-purple-500 text-white bg-purple-500 hover:bg-purple-400",
+          "border border-purple-500 text-white bg-purple-500 hover:bg-purple-600",
         secondary:
           "border border-purple-600 bg-white text-purple-600 hover:bg-purple-50",
         danger: "text-white",

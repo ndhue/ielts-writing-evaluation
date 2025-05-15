@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Poppins } from "next/font/google";
 import "react-circular-progressbar/dist/styles.css";
-import { Sidebar } from "@/components";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,10 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={poppins.className}>
-      <body>
-        <Sidebar />
-        <section className="ml-28 mt-8 mr-8">{children}</section>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

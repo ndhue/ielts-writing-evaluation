@@ -16,7 +16,7 @@ const MainTitle = () => {
         <span>
           — Ready to shine?{" "}
           <Link
-            href="/login"
+            href="/auth"
             className="relative font-bold after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-current hover:after:w-full after:transition-all after:duration-300"
           >
             Log in

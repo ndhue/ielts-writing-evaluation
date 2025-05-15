@@ -22,3 +22,5 @@ export { default as MagicianIcon } from "./MagicianIcon";
 export { default as ManaIcon } from "./ManaIcon";
 export { default as WizardIcon } from "./WizardIcon";
 export { default as CauldronIcon } from "./CauldronIcon";
+export { default as PlayIcon } from "./PlayIcon";
+export { default as RefreshIcon } from "./RefreshIcon";
