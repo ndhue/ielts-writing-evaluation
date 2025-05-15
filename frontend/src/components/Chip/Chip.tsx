@@ -20,17 +20,15 @@ const Chip = ({
   className,
 }: ChipProps) => {
   const variantClasses = {
-    default: "border border-purple-600 text-white",
-    outlined: "border border-border text-slate-500",
+    default:
+      "border border-purple-600 bg-purple-600 text-white hover:bg-purple-500",
+    outlined: "border border-border text-slate-500 hover:bg-slate-50",
   };
 
-  const wrapperClasses = `rounded-2xl text-xs flex items-center justify-center py-1 px-2.5 w-fit ${variantClasses[variant]}`;
+  const wrapperClasses = `rounded-2xl text-xs flex items-center justify-center py-1 px-2.5 w-fit cursor-pointer transition-all duration-300 ${variantClasses[variant]}`;
 
   return (
-    <div
-      className={cn(wrapperClasses, className)}
-      onClick={onClick}
-    >
+    <div className={cn(wrapperClasses, className)} onClick={onClick}>
       <span>
         {icon} {label}
       </span>

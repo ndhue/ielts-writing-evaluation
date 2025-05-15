@@ -11,7 +11,7 @@ const Input = forwardRef(
   ({ isError, errorMessage, icon, className, ...props }: InputProps, ref) => {
     return (
       <>
-        <div className="relative">
+        <div className="relative w-full">
           <input
             ref={(inputRef) => {
               if (typeof ref === "function") {
