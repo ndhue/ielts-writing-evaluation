@@ -59,3 +59,27 @@ exports.changePassword = async (req, res) =>{
     res.status(500).json({ message: 'Internal server' });
   }
 }
+exports.getProfile = async (req, res) => {
+    const userId = req.user.userId;
+    try {
+        
+        const profile = await User.findById(userId);
+        
+        if (!profile) {
+            return res.status(403).json({ error: 'Không có quyền truy cập' });
+        }
+        res.status(200).json({
+            success: true,
+            data: {
+            name: profile.name,
+            email: profile.email,
+            target: profile.target,
+            description: profile.description,
+            avatarUrl: profile.avatarUrl
+          }
+        });
+    } catch (err) {
+        console.error('Get profile error:', err);
+        res.status(500).json({ error: 'Failed to get profile' });
+    }
+};

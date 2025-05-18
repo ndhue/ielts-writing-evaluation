@@ -1,0 +1,10 @@
+const express = require('express');
+const router = express.Router();
+const { submitEssay, getEssayHistory, getFeedbackHistory, getResultEssaydetail, getAllResultEssay } = require('../controllers/essayController');
+const { authenticateToken } = require('../middleware/auth');
+router.post('/essay',authenticateToken, submitEssay);
+router.get('/getEssayHistory',authenticateToken, getEssayHistory);
+router.get('/getFeedbackHistory',authenticateToken, getFeedbackHistory);
+router.get('/getEssayDetail',authenticateToken, getResultEssaydetail);
+router.get('/getAllResultEssay',authenticateToken, getAllResultEssay);
+module.exports = router;
