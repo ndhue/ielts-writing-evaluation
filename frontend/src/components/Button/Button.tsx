@@ -35,7 +35,7 @@ const Button = forwardRef(
         primary:
           "border border-purple-500 text-white bg-purple-500 hover:bg-purple-600",
         secondary:
-          "border border-purple-600 bg-white text-purple-600 hover:bg-purple-50",
+          "border border-purple-600 bg-white text-purple-600 hover:bg-purple-600 hover:text-white",
         danger: "text-white",
         icon: "flex items-center justify-center min-h-[24px] min-w-[24px] p-[1px] border",
       };
