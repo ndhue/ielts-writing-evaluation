@@ -1,6 +1,7 @@
 "use client";
 import { Button, Input } from "@/components";
 import Link from "next/link";
+import EmailNotiDialog from "./EmailNotiDialog";
 
 const SignInForm = () => {
   return (
@@ -23,13 +24,8 @@ const SignInForm = () => {
       </div>
 
       <Button className="w-full mt-6" label="Sign in" />
-      <Link
-        href="/auth/forgot-password"
-        className="text-sm text-slate-400 hover:text-slate-300 hover:underline mt-4 block text-center transition-all duration-200"
-      >
-        Forgot your password?
-      </Link>
-      <div className="flex gap-2 justify-center mt-4">
+      <EmailNotiDialog />
+      <div className="flex gap-2 justify-center mt-2">
         <span className="text-sm text-slate-400">
           Don&apos;t have an account?{" "}
         </span>
@@ -40,7 +36,7 @@ const SignInForm = () => {
           Sign up
         </Link>
       </div>
-      <div className="mt-6 text-center">
+      <div className="mt-2 text-center">
         <Link
           href="/"
           className="text-sm text-slate-300 hover:text-white hover:underline transition-all duration-200"

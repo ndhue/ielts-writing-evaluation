@@ -14,7 +14,7 @@ const SignUpForm = () => {
         />
       </div>
       <div className="name mt-6">
-        <label htmlFor="name">Email</label>
+        <label htmlFor="name">Name</label>
         <Input
           name="name"
           type="text"
