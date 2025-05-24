@@ -44,6 +44,7 @@ const ChangePasswordDialog = () => {
         label="Change password"
         className="border-none hover:bg-white hover:text-purple-700 ml-auto"
         onClick={onOpen}
+        type="button"
       />
       <div
         className={cn("fixed inset-0 bg-[#7A69D1] opacity-60 z-40", {
