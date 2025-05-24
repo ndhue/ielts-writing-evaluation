@@ -1,73 +1,52 @@
 "use client";
-
 import { Button } from "@/components";
-import { useDisclosure } from "@/hooks";
-import { cn } from "@/utils/cn";
-import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
 
-const EmailNotiDialog = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const dialogRef = useRef<HTMLDivElement>(null);
+interface EmailNotiDialogProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  message: string;
+}
 
-  // Close when clicking outside the dialog
+const EmailNotiDialog = ({ open, onClose, title, message }: EmailNotiDialogProps) => {
+  const [isOpen, setIsOpen] = useState(open);
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dialogRef.current &&
-        !dialogRef.current.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    };
+    setIsOpen(open);
+  }, [open]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleKeyDown);
-    }
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose();
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+  if (!isOpen) return null;
 
   return (
-    <>
-      <Button
-        variant="secondary"
-        label="Forgot your password?"
-        className="text-sm text-slate-300 hover:text-white hover:underline transition-all duration-200 border-none hover:bg-transparent bg-transparent mx-auto mt-4"
-        onClick={onOpen}
-      />
-      <div
-        className={cn("fixed inset-0 bg-[#7A69D1] opacity-60 z-40", {
-          hidden: !isOpen,
-        })}
-      />
-      <div
-        className={cn("fixed z-50 inset-0 flex items-center justify-center", {
-          hidden: !isOpen,
-        })}
-      >
-        <div ref={dialogRef} className="bg-white p-6 rounded-2xl shadow-xl text-slate-700 w-[400px]">
-          <p className="font-bold text-2xl">Check your email</p>
-          <p className="my-4 text-sm">
-            We&apos;ve sent a confirmation link to your email. Please check your
-            inbox to reset your password.
-          </p>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-slate-900 rounded-lg max-w-md w-full p-6 shadow-lg">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-slate-100">{title}</h2>
+          <div className="flex justify-center mt-4">
+            <div className="bg-slate-800 p-3 rounded-full">
+            </div>
+          </div>
+          <p className="mt-4 text-slate-300">{message}</p>
+        </div>
+        <div className="flex flex-col gap-4 mt-6">
           <Button
-            variant="secondary"
-            label="Resend email"
-            className="rounded-md border-2 w-full"
+            onClick={handleClose}
+            label="Got it"
+            className="w-full"
           />
+          <Link href="/auth" className="text-center text-sm text-slate-400 hover:underline">
+            Return to login
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
