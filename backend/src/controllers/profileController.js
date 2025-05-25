@@ -63,8 +63,7 @@ exports.changePassword = async (req, res) => {
     const user = await User.findById(userId);
     if (user.authProvider !== "local") {
       return res.status(401).json({
-        message:
-          "Cannot change password for accounts that login with Google.",
+        message: "Cannot change password for accounts that login with Google.",
       });
     }
     const salt = await bcrypt.genSalt(10);
@@ -89,6 +88,56 @@ exports.changePassword = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server" });
+  }
+};
+
+// Add updateAvatar function
+exports.updateAvatar = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // If user already has an avatar, delete the old one
+    if (user.avatarUrl) {
+      try {
+        const urlParts = user.avatarUrl.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const avatarPath = path.join(
+          __dirname,
+          "../../public/uploads/avatars",
+          filename
+        );
+
+        if (fs.existsSync(avatarPath)) {
+          fs.unlinkSync(avatarPath);
+        }
+      } catch (err) {
+        console.error("Error deleting previous avatar:", err);
+        // Continue even if deletion fails
+      }
+    }
+
+    // Update user with new avatar URL
+    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+    user.avatarUrl = avatarUrl;
+    await user.save();
+
+    res.json({
+      message: "Avatar updated successfully",
+      avatarUrl: avatarUrl,
+    });
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
