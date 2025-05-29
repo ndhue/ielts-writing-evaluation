@@ -22,14 +22,12 @@ export default function Home() {
             <div className="font-semibold text-gray-800">
               Est. Overall Band Score
             </div>
-            <div className="text-5xl font-bold text-purple-600">
-              {0.5}
-            </div>
+            <div className="text-6xl font-bold text-purple-600">{0}</div>
             <div className="text-xs text-gray-600 mt-1">(+/- 0.5)</div>
           </div>
-          <ScoreBox label="Grammar" score={0} />
-          <ScoreBox label="Grammar" score={0} />
-          <ScoreBox label="Grammar" score={0} />
+          <ScoreBox label="Task Achievement" score={0} />
+          <ScoreBox label="Coherence and Cohesion" score={0} />
+          <ScoreBox label="Lexical Resource" score={0} />
           <ScoreBox label="Grammar" score={0} />
         </div>
       </div>

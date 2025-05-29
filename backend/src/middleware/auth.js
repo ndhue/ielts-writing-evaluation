@@ -12,6 +12,7 @@ exports.authenticateToken = (req, res, next) => {
     return res.status(403).json({ message: 'Token không hợp lệ hoặc đã hết hạn' });
   }
 };
+
 exports.authenticateOptional = (req, res, next) => {
   const token = req.cookies.accessToken || req.headers.authorization?.split(' ')[1];
 

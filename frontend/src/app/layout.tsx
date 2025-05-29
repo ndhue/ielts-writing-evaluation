@@ -1,7 +1,8 @@
+import { QueryClientProvider } from "@/providers/QueryClientProvider";
 import type { Metadata } from "next";
-import "../styles/globals.css";
 import { Poppins } from "next/font/google";
 import "react-circular-progressbar/dist/styles.css";
+import "../styles/globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={poppins.className}>
-      <body>{children}</body>
+      <body>
+        <QueryClientProvider>{children}</QueryClientProvider>
+      </body>
     </html>
   );
 }
