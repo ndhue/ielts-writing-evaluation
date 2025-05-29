@@ -6,31 +6,40 @@ const AiResults = require('../models/AIResults');
 
 
 async function submitEssay(req, res) {
-  const userId = req.user.userId;
   const { topic, essay } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({
-      success: false,
-      message: 'Không tìm thấy nguời dùng'
-    });
-  }
-
   if (!topic || !essay) {
     return res.status(400).json({
       success: false,
       message: 'Chủ đề và bài luận không được để trống!'
     });
   }
+  // Nếu chưa đăng nhập -> chỉ trả về kết quả AI, không lưu DB
+  if (!req.user || !req.user.userId) {
+    try {
+      const prediction = await callModelAi.callAIModel(topic, essay);
+      return res.status(200).json({
+        success: true,
+        message: 'Đăng nhập để lưu lại lịch sử.',
+        ai_output: prediction
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi khi gọi mô hình AI.',
+        error: error.message
+      });
+    }
+  }
+  // Nếu đã đăng nhập -> lưu topic, essay, lịch sử
+  const userId = req.user.userId;
 
   try {
-
-    const resultTopic = await Topic.findOne({topic:topic});
+    const resultTopic = await Topic.findOne({ topic });
     let topicId;
 
     if (!resultTopic) {
       const newTopic = new Topic({
-        topic: topic,
+        topic,
         is_generated: false,
         created_by: userId,
       });
@@ -41,12 +50,12 @@ async function submitEssay(req, res) {
     }
 
     const prediction = await callModelAi.callAIModel(topic, essay);
+
     const newEssay = new Essay({
       user_id: userId,
       topic_id: topicId,
-      essay: essay
+      essay
     });
-
     const essayResult = await newEssay.save();
 
     const essayHistory = new EssayHistory({
@@ -65,7 +74,6 @@ async function submitEssay(req, res) {
 
     res.json({
       success: true,
-      message: 'Success',
       result: {
         essay: essayResult,
         aiPrediction: aiResult
@@ -79,7 +87,7 @@ async function submitEssay(req, res) {
       error: error.message
     });
   }
-};
+}
 
 async function getEssayHistory(req, res) {
     const userId = req.user.userId;
