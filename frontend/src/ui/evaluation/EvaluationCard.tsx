@@ -4,6 +4,7 @@ import { useSwipeable } from "react-swipeable";
 import { RightArrowIcon, TrashIcon } from "@/components/icons";
 import { useState } from "react";
 import { ScoreCircle } from "@/components";
+import router from "next/router";
 
 const EvaluationCard = () => {
   const [swiped, setSwiped] = useState(false);
@@ -52,7 +53,13 @@ const EvaluationCard = () => {
               <span className="text-purple-600 font-medium mr-2">Essay:</span>
               Interviews form the basic criteria... ....
             </span>
-            <span className="text-purple-600 cursor-pointer group hover:font-medium transition-all duration-200 ease-in-out w-fit">
+            <span
+              className="text-purple-600 cursor-pointer group hover:font-medium transition-all duration-200 ease-in-out w-fit"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/evaluations/1");
+              }}
+            >
               [ View full evaluation{" "}
               <RightArrowIcon className="inline transition-transform duration-200 ease-in-out group-hover:translate-x-1" />{" "}
               ]
