@@ -9,29 +9,52 @@ import {
   Tooltip,
 } from "recharts";
 
-const data = [
+interface ScoreData {
+  subject: string;
+  score: number;
+}
+
+interface ScoreRadarChartProps {
+  data?: ScoreData[];
+  width?: number;
+  height?: number;
+}
+
+// Default data as fallback when no data is provided
+const defaultData = [
   {
     subject: "Task Achievement",
-    A: 4.5,
+    score: 4.5,
   },
   {
     subject: "Coherence & Cohesion",
-    A: 7.0,
+    score: 7.0,
   },
   {
     subject: "Lexical Resource",
-    A: 6.5,
+    score: 6.5,
   },
   {
     subject: "Grammar",
-    A: 7.0,
+    score: 7.0,
   },
 ];
 
-const ScoreRadarChart = () => {
+const ScoreRadarChart = ({
+  data = defaultData,
+  width = 500, // Increase default width
+  height = 500, // Increase default height
+}: ScoreRadarChartProps) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RadarChart cx="50%" cy="50%" outerRadius="40%" data={data}>
+      <RadarChart
+        cx="50%"
+        cy="50%"
+        outerRadius="60%"
+        data={data}
+        width={width}
+        height={height}
+      >
         <PolarGrid />
         <PolarAngleAxis
           dataKey="subject"
@@ -42,7 +65,7 @@ const ScoreRadarChart = () => {
         <PolarRadiusAxis domain={[0, 9]} />
         <Radar
           name="Score"
-          dataKey="A"
+          dataKey="score"
           stroke="#7A69D1"
           fill="#A594F9"
           fillOpacity={0.6}
