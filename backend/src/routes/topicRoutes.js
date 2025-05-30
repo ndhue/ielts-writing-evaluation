@@ -6,8 +6,8 @@ const {
   getTopicsIsGenerated,
   removeTopic,
 } = require("../controllers/topicController");
-const { authenticateToken } = require("../middleware/auth");
-router.post("/topic/generate", authenticateToken, generateTopics);
+const { authenticateToken, authenticateOptional } = require('../middleware/auth');
+router.post('/topic/generate',authenticateOptional,generateTopics);
 router.get("/topic/getalltopic", authenticateToken, getAllTopics);
 router.get(
   "/topic/gettopicisgenerate",
