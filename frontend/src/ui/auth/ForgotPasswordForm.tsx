@@ -11,13 +11,11 @@ import EmailNotiDialog from "./EmailNotiDialog";
 // Define form schema with Zod
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-const SignUpForm = () => {
+const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const { showError } = useShowNoti();
@@ -30,8 +28,6 @@ const SignUpForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      name: "",
-      password: "",
     },
   });
 
@@ -40,7 +36,7 @@ const SignUpForm = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
         {
           method: "POST",
           headers: {
@@ -50,13 +46,21 @@ const SignUpForm = () => {
         }
       );
 
+      const result = await response.json();
+
       if (!response.ok) {
-        showError({ message: "Registration failed. Please try again." });
+        throw new Error(result.message || "Failed to process request");
       }
 
+      // Show success dialog
       setShowDialog(true);
     } catch (error) {
-      showError({ message: `Registration error: ${error}` });
+      showError({
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +68,14 @@ const SignUpForm = () => {
 
   return (
     <div className="text-slate-100">
+      <h2 className="text-2xl font-semibold text-center mb-6">
+        Forgot your password?
+      </h2>
+      <p className="text-center text-slate-300 mb-6">
+        Enter your email address and we&apos;ll send you a link to reset your
+        password.
+      </p>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="email">
           <label htmlFor="email">Email</label>
@@ -76,46 +88,22 @@ const SignUpForm = () => {
             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
           )}
         </div>
-        <div className="name mt-6">
-          <label htmlFor="name">Name</label>
-          <Input
-            {...register("name")}
-            type="text"
-            className="w-[400px] mt-1 border border-slate-100 py-2"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
-        <div className="password mt-6">
-          <label htmlFor="password">Password</label>
-          <Input
-            {...register("password")}
-            type="password"
-            className="w-[400px] mt-1 border border-slate-100 py-2"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
 
         <Button
           className="w-full mt-6"
-          label={isLoading ? "Signing up..." : "Sign up"}
+          label={isLoading ? "Sending..." : "Send reset link"}
           disabled={isLoading}
           type="submit"
         />
       </form>
 
       <div className="flex gap-2 justify-center mt-4">
-        <span className="text-sm text-slate-400">Already have an account?</span>
+        <span className="text-sm text-slate-400">Remember your password?</span>
         <Link
           href="/auth"
           className="text-sm text-slate-300 hover:text-white hover:underline transition-all duration-200"
         >
-          Sign in
+          Back to login
         </Link>
       </div>
       <div className="mt-6 text-center">
@@ -131,12 +119,12 @@ const SignUpForm = () => {
         <EmailNotiDialog
           open={showDialog}
           onClose={() => setShowDialog(false)}
-          title="Registration Confirmation"
-          message="Please check your email to confirm your registration. We've sent you a verification link that will expire in 10 minutes."
+          title="Password Reset Email Sent"
+          message="Please check your email for instructions to reset your password. If you don't receive an email within a few minutes, please check your spam folder."
         />
       )}
     </div>
   );
 };
 
-export default SignUpForm;
+export default ForgotPasswordForm;

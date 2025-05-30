@@ -1,10 +1,8 @@
-import React from "react";
-import { CloseIcon } from "../icons";
 import { cn } from "@/utils/cn";
+import { CloseIcon } from "../icons";
 
 interface ChipProps {
   label: string;
-  icon?: React.ReactNode;
   onClick?: () => void;
   onDelete?: () => void;
   variant?: "default" | "outlined";
@@ -13,7 +11,6 @@ interface ChipProps {
 
 const Chip = ({
   label,
-  icon,
   onClick,
   onDelete,
   variant = "default",
@@ -29,9 +26,7 @@ const Chip = ({
 
   return (
     <div className={cn(wrapperClasses, className)} onClick={onClick}>
-      <span>
-        {icon} {label}
-      </span>
+      <span className="max-w-[20ch] truncate truncate-ellipsis">{label}</span>
       {onDelete && (
         <CloseIcon className="size-3 cursor-pointer ml-2" onClick={onDelete} />
       )}

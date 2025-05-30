@@ -93,3 +93,30 @@ exports.getTopicsIsGenerated = async (req, res) => {
         res.status(500).json({ error: 'Failed to get topics' });
     }
 };
+exports.removeTopic = async (req, res) => {
+  const { topicId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const topic = await Topic.findById(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ error: "Chủ đề không tồn tại" });
+    }
+
+    // Check if the user owns the topic
+    if (topic.created_by.toString() !== userId) {
+      return res.status(403).json({ error: "Không có quyền xóa chủ đề này" });
+    }
+
+    await Topic.findByIdAndDelete(topicId);
+
+    res.status(200).json({
+      success: true,
+      message: "Xóa chủ đề thành công",
+    });
+  } catch (err) {
+    console.error("Remove topic error:", err);
+    res.status(500).json({ error: "Failed to remove topic" });
+  }
+};
