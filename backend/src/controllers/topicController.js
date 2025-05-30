@@ -2,50 +2,63 @@ const { generateTopicsFromKeywords } = require('../services/gpt');
 const {Topic } = require('../models/Topic');
 
 exports.generateTopics = async (req, res) => {
-    const {keywords } = req.body;
-    const userId = req.user.userId;
-    if ((!keywords)) {
+    const { keywords } = req.body;
+
+    if (!keywords) {
         return res.status(400).json({ error: '"Keywords" là bắt buộc' });
     }
-
     try {
-        
-        const generateTopics = await generateTopicsFromKeywords({keywords });
-        if (!generateTopics || !generateTopics.topic || !Array.isArray(generateTopics.outline) || generateTopics.outline.length === 0) {
+        const generated = await generateTopicsFromKeywords({ keywords });
+
+        if (!generated || !generated.topic || !Array.isArray(generated.outline) || generated.outline.length === 0) {
             return res.status(400).json({ error: 'Không tạo được chủ đề' });
         }
         const fixedTopics = {
-            topic: generateTopics.topic,
-            outline: generateTopics.outline.filter(item => item)  
+            topic: generated.topic,
+            outline: generated.outline.filter(item => item?.trim())
         };
-        const saveTopic = new Topic({
-            topic: fixedTopics.topic,
-            description: fixedTopics.outline.join('; '),
-            is_generated: true,
-            keywords,
-            created_by: userId,
-        });
+        if (req.user && req.user.userId) {
+            const userId = req.user.userId;
 
-        const topicResult = await saveTopic.save();
+            const saveTopic = new Topic({
+                topic: fixedTopics.topic,
+                description: fixedTopics.outline.join(' '),
+                is_generated: true,
+                keywords,
+                created_by: userId
+            });
 
-        res.status(200).json({
-            success: true,
-            message: 'Tạo topic thành công',
-            data: {
-                topic_id: topicResult._id,
-                topic: topicResult.topic,
-                description: topicResult.description,
-                is_generated: topicResult.is_generated,
-                keywords: topicResult.keywords,
-                created_by: topicResult.created_by,
-                created_at: topicResult.created_at
-            }
-        });
+            const topicResult = await saveTopic.save();
+
+            return res.status(200).json({
+                success: true,
+                message: 'Tạo topic thành công',
+                data: {
+                    topic_id: topicResult._id,
+                    topic: topicResult.topic,
+                    description: topicResult.description,
+                    is_generated: topicResult.is_generated,
+                    keywords: topicResult.keywords,
+                    created_by: topicResult.created_by,
+                    created_at: topicResult.created_at
+                }
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: 'Tạo topic thành công',
+                data: {
+                    topic: fixedTopics.topic,
+                    description: fixedTopics.outline.join('.')
+                }
+            });
+        }
     } catch (err) {
         console.error('Generate topics error:', err);
-        res.status(500).json({ error: 'Failed to generate topics' });
+        return res.status(500).json({ error: 'Lỗi khi tạo chủ đề' });
     }
 };
+
 exports.getAllTopics = async (req, res) => {
     const userId = req.user.userId;
     try {
