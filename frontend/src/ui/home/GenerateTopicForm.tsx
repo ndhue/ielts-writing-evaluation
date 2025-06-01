@@ -48,16 +48,22 @@ const GenerateTopicForm = () => {
       <div className="result">
         <p className="text-sm mb-2">Result</p>
         <div className="relative">
-          <Textarea
-            rows={6}
-            value={
-              topic
-                ? `${topic}\n\n${description}`
-                : "Generated topic will appear here..."
-            }
-            disabled={true}
-            className={topic ? "text-slate-700" : "text-slate-400 italic"}
-          />
+          <div className="mb-2">
+            <Textarea
+              rows={2}
+              value={topic || "Generated topic will appear here..."}
+              disabled={true}
+              className={topic ? "text-slate-700 font-medium" : "text-slate-400 italic"}
+            />
+          </div>
+          <div>
+            <Textarea
+              rows={4}
+              value={description || "Topic description will appear here..."}
+              disabled={true}
+              className={topic ? "text-slate-700" : "text-slate-400 italic"}
+            />
+          </div>
           {topic && (
             <div
               className="absolute top-1.5 right-1.5 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
