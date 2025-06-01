@@ -1,35 +1,52 @@
+"use client";
+
+import { useEssayEvaluation } from "@/hooks/useEssayEvaluation";
 import {
   EvaluationCard,
-  ScoreStatisticTable,
-  ScoreSummaryTable,
+  EvaluationsEmptyState,
+  EvaluationsLoadingState,
 } from "@/ui/evaluation";
 
-const mockHistory = [
-  { testDate: "2023-10-01", overall: 7.5 },
-  { testDate: "2023-09-15", overall: 8.0 },
-  { testDate: "2023-08-20", overall: 7.0 },
-];
+const EvaluationsPage = () => {
+  const { evaluations, isLoadingEvaluations, isEvaluationsError } =
+    useEssayEvaluation();
 
-const EvaluationPage = () => {
+  if (isLoadingEvaluations) {
+    return <EvaluationsLoadingState />;
+  }
+
+  if (isEvaluationsError) {
+    return (
+      <div className="my-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Error Loading Evaluations</h1>
+        <p className="text-gray-600">
+          There was a problem loading your evaluations.
+        </p>
+      </div>
+    );
+  }
+
+  if (!evaluations || evaluations.length === 0) {
+    return <EvaluationsEmptyState />;
+  }
+
   return (
-    <div className="my-4">
-      <h1 className="font-bold text-3xl mb-4">Feedback history</h1>
-      <div className="grid grid-cols-3 gap-12">
-        <div className="col-span-2">
-          <EvaluationCard />
-        </div>
-        <div className="flex flex-col gap-8">
-          <ScoreStatisticTable
-            highest={9.0}
-            lowest={5.5}
-            average={7.5}
-            totalEssays={7}
+    <div className="my-8">
+      <h1 className="text-2xl font-bold mb-6">Your Writing Evaluations</h1>
+      <div className="space-y-6">
+        {evaluations.map((evaluation) => (
+          <EvaluationCard
+            key={evaluation.id}
+            id={evaluation.id}
+            date={evaluation.created_at}
+            topic={evaluation.topic || "Untitled Topic"}
+            essay={evaluation.essay || "No essay provided"}
+            score={evaluation.result.band_scores.overall.score || 0}
           />
-          <ScoreSummaryTable scoreHistory={mockHistory} />
-        </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default EvaluationPage;
+export default EvaluationsPage;

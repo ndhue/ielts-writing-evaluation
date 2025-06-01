@@ -1,12 +1,29 @@
 "use client";
 
-import { useSwipeable } from "react-swipeable";
-import { RightArrowIcon, TrashIcon } from "@/components/icons";
-import { useState } from "react";
 import { ScoreCircle } from "@/components";
-import router from "next/router";
+import { RightArrowIcon, TrashIcon } from "@/components/icons";
+import { truncateEssay } from "@/utils/utils";
+import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useSwipeable } from "react-swipeable";
 
-const EvaluationCard = () => {
+interface EvaluationCardProps {
+  id: string;
+  date: string;
+  topic: string;
+  essay: string;
+  score: number;
+}
+
+const EvaluationCard = ({
+  id,
+  date,
+  topic,
+  essay,
+  score,
+}: EvaluationCardProps) => {
+  const router = useRouter();
   const [swiped, setSwiped] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -20,7 +37,7 @@ const EvaluationCard = () => {
 
   return (
     <div className="text-slate-500 text-sm font-light">
-      <p className="mb-2">24/04/2025 08:30</p>
+      <p className="mb-2"> {format(new Date(date), "MMM d, yyyy")}</p>
 
       <div
         {...handlers}
@@ -41,23 +58,20 @@ const EvaluationCard = () => {
             swiped ? "translate-x-[80px]" : ""
           }`}
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 mr-4">
             <span>
               <span className="text-purple-600 font-medium mr-2">Topic:</span>
-              Interviews form the basic criteria for most large companies.
-              However, some people think that the interview is not a reliable
-              method of choosing whom to employ and there are other better
-              methods.
+              {topic}
             </span>
-            <span>
+            <span className="text-justify">
               <span className="text-purple-600 font-medium mr-2">Essay:</span>
-              Interviews form the basic criteria... ....
+              {truncateEssay(essay)}
             </span>
             <span
               className="text-purple-600 cursor-pointer group hover:font-medium transition-all duration-200 ease-in-out w-fit"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/evaluations/1");
+                router.push(`/evaluations/${id}`);
               }}
             >
               [ View full evaluation{" "}
@@ -66,7 +80,7 @@ const EvaluationCard = () => {
             </span>
           </div>
           <ScoreCircle
-            score={7.5}
+            score={score}
             animate={false}
             textClassName="text-xs"
             circleClassName="size-34"

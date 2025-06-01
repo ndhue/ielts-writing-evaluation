@@ -1,79 +1,82 @@
 "use client";
+import { useEffect, useState } from "react";
 import {
-  Radar,
-  RadarChart,
-  PolarGrid,
   PolarAngleAxis,
+  PolarGrid,
   PolarRadiusAxis,
+  Radar,
+  RadarChart as RechartsRadarChart,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
 
-interface ScoreData {
-  subject: string;
-  score: number;
+interface RadarChartProps {
+  scores: {
+    taskAchievement: number;
+    coherenceCohesion: number;
+    lexicalResource: number;
+    grammar: number;
+  };
 }
 
-interface ScoreRadarChartProps {
-  data?: ScoreData[];
-  width?: number;
-  height?: number;
-}
+const RadarChart = ({ scores }: RadarChartProps) => {
+  const [mounted, setMounted] = useState(false);
 
-// Default data as fallback when no data is provided
-const defaultData = [
-  {
-    subject: "Task Achievement",
-    score: 4.5,
-  },
-  {
-    subject: "Coherence & Cohesion",
-    score: 7.0,
-  },
-  {
-    subject: "Lexical Resource",
-    score: 6.5,
-  },
-  {
-    subject: "Grammar",
-    score: 7.0,
-  },
-];
+  // Fix for hydration issues with recharts
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-const ScoreRadarChart = ({
-  data = defaultData,
-  width = 500, // Increase default width
-  height = 500, // Increase default height
-}: ScoreRadarChartProps) => {
+  const data = [
+    {
+      subject: "Task Achievement",
+      score: scores?.taskAchievement || 0,
+      fullMark: 9,
+    },
+    {
+      subject: "Coherence & Cohesion",
+      score: scores?.coherenceCohesion || 0,
+      fullMark: 9,
+    },
+    {
+      subject: "Lexical Resource",
+      score: scores?.lexicalResource || 0,
+      fullMark: 9,
+    },
+    {
+      subject: "Grammar",
+      score: scores?.grammar || 0,
+      fullMark: 9,
+    },
+  ];
+
+  if (!mounted)
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        Loading chart...
+      </div>
+    );
+
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RadarChart
-        cx="50%"
-        cy="50%"
-        outerRadius="60%"
-        data={data}
-        width={width}
-        height={height}
-      >
-        <PolarGrid />
+      <RechartsRadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+        <PolarGrid stroke="#e0e0e0" />
         <PolarAngleAxis
           dataKey="subject"
-          style={{
-            fontSize: "12px",
-          }}
+          tick={{ fill: "#333", fontSize: 14 }}
         />
-        <PolarRadiusAxis domain={[0, 9]} />
+        <PolarRadiusAxis angle={90} domain={[0, 9]} />
         <Radar
           name="Score"
           dataKey="score"
-          stroke="#7A69D1"
-          fill="#A594F9"
+          stroke="#8884d8"
+          fill="#8884d8"
           fillOpacity={0.6}
         />
         <Tooltip />
-      </RadarChart>
+      </RechartsRadarChart>
     </ResponsiveContainer>
   );
 };
 
-export default ScoreRadarChart;
+export default RadarChart;

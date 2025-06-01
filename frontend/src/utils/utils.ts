@@ -1,4 +1,4 @@
-export const truncateEssay = (text: string, maxWords = 150): string => {
+export const truncateEssay = (text: string, maxWords = 80): string => {
   const words = text.trim().split(/\s+/);
   if (words.length <= maxWords) return text;
   return words.slice(0, maxWords).join(" ") + "...";

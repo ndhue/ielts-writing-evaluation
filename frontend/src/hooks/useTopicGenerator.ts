@@ -67,24 +67,34 @@ export function useTopicGenerator() {
       return;
     }
 
-    if (!isAuthenticated) {
-      showError({ message: "Please login to generate topics" });
-      return;
-    }
-
     setIsLoading(true);
     setTopic("");
     setDescription("");
     setGeneratedTopic(null);
 
     try {
-      const response = await authFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/topic/generate`,
-        {
-          method: "POST",
-          body: JSON.stringify({ keywords }),
-        }
-      );
+      let response;
+
+      if (isAuthenticated) {
+        response = await authFetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/topic/generate`,
+          {
+            method: "POST",
+            body: JSON.stringify({ keywords }),
+          }
+        );
+      } else {
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/topic/generate`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ keywords }),
+          }
+        );
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
