@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email đã được đăng ký." });
+      return res.status(400).json({ message: "Email has already been registered." });
     }
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
@@ -214,7 +214,7 @@ exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "Tài khoản không tồn tại" });
+      return res.status(404).json({ message: "Account does not exist" });
     }
     const token = jwt.sign(
       { userId: user._id, email: user.email },

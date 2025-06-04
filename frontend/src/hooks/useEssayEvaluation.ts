@@ -37,6 +37,18 @@ export interface EssayResult {
   created_at: string;
 }
 
+export interface EssaySubmissionResult {
+  average: number;
+  highest: number;
+  lowest: number;
+  total: number;
+}
+
+export interface RecentSubmission {
+  date: string;
+  score: number;
+}
+
 export function useEssayEvaluation(essayId?: string) {
   const { authFetch, isAuthenticated } = useAuth();
   const { showError } = useShowNoti();
@@ -116,7 +128,7 @@ export function useEssayEvaluation(essayId?: string) {
 
   // Get evaluation history
   const {
-    data: evaluations,
+    data: evaluationsData,
     isLoading: isLoadingEvaluations,
     isError: isEvaluationsError,
     refetch: refetchEvaluations,
@@ -135,7 +147,7 @@ export function useEssayEvaluation(essayId?: string) {
         }
 
         const result = await response.json();
-        return (result.data as EssayResult[]) || [];
+        return result;
       } catch (error) {
         console.error("Fetch evaluations error:", error);
         throw error;
@@ -143,6 +155,13 @@ export function useEssayEvaluation(essayId?: string) {
     },
     enabled: isAuthenticated,
   });
+
+  // Extract data from the query result
+  const evaluations = (evaluationsData?.data as EssayResult[]) || [];
+  const evaluationStats =
+    (evaluationsData?.stats as EssaySubmissionResult) || null;
+  const recentEvaluations =
+    (evaluationsData?.recent as RecentSubmission[]) || [];
 
   // Get a specific evaluation by ID
   const {
@@ -190,6 +209,8 @@ export function useEssayEvaluation(essayId?: string) {
     isSubmitting: submitEssayMutation.isPending,
     currentEvaluation,
     evaluations,
+    evaluationStats,
+    recentEvaluations,
     isLoadingEvaluations,
     isEvaluationsError,
     refetchEvaluations,

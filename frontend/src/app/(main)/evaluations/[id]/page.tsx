@@ -4,11 +4,12 @@ import { CriterionScoreCircle, ScoreCircle } from "@/components";
 import { useEssayEvaluation } from "@/hooks/useEssayEvaluation";
 import { RadarChart } from "@/ui/evaluation";
 import formatEvaluation from "@/utils/evaluationFormatter";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 const Evaluation = () => {
   const params = useParams();
+  const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
   // Pass the ID from params to the hook
@@ -80,6 +81,25 @@ const Evaluation = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
+      {/* Back button */}
+      <button
+        onClick={() => router.back()}
+        className="flex items-center text-gray-600 hover:text-gray-900 mb-6 group transition-colors cursor-pointer hover:underline"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Back to results
+      </button>
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         Evaluation Results
       </h1>

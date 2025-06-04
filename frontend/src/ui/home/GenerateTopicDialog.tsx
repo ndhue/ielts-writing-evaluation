@@ -43,6 +43,7 @@ const GenerateTopicDialog = () => {
     <>
       <Button
         variant="icon"
+        type="button"
         icon={<FantasyIcon />}
         label="Generate topic"
         className="border-none bg-purple-400 text-purple-600 px-2.5 py-1.5 rounded-full hover:bg-purple-300 hover:text-purple-500"

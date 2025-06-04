@@ -81,6 +81,10 @@ const ResetPasswordForm = ({ token }: { token: string | null }) => {
       const result = await response.json();
 
       if (!response.ok) {
+        const data = await response.json();
+        showError({
+          message: data.message || "Failed to reset password",
+        });
         throw new Error(result.message || "Failed to reset password");
       }
 

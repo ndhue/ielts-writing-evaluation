@@ -36,7 +36,7 @@ const EvaluationCard = ({
   });
 
   return (
-    <div className="text-slate-500 text-sm font-light">
+    <div className="text-slate-500 text-sm font-light mt-2">
       <p className="mb-2"> {format(new Date(date), "MMM d, yyyy")}</p>
 
       <div

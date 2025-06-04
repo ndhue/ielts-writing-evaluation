@@ -51,10 +51,13 @@ const SignUpForm = () => {
       );
 
       if (!response.ok) {
-        showError({ message: "Registration failed. Please try again." });
+        const data = await response.json();
+        showError({
+          message: data.message || "Registration failed. Please try again.",
+        });
+      } else {
+        setShowDialog(true);
       }
-
-      setShowDialog(true);
     } catch (error) {
       showError({ message: `Registration error: ${error}` });
     } finally {

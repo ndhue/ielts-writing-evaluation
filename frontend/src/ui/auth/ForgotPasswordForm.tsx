@@ -49,6 +49,10 @@ const ForgotPasswordForm = () => {
       const result = await response.json();
 
       if (!response.ok) {
+        const data = await response.json();
+        showError({
+          message: data.message || "Failed to process request",
+        });
         throw new Error(result.message || "Failed to process request");
       }
 

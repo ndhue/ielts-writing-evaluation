@@ -17,7 +17,7 @@ const AvatarForm = () => {
 
   // Get avatar URL with timestamp to prevent caching
   const avatarUrl = profile?.avatarUrl
-    ? `${profile.avatarUrl}?t=${timestamp}`
+    ? `${process.env.NEXT_PUBLIC_API_URL}/${profile.avatarUrl}?t=${timestamp}`
     : null;
 
   const handleFileChange = async (

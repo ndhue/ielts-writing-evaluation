@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components";
-import { ClockIcon, RefreshIcon, PlayIcon } from "@/components/icons";
+import { ClockIcon, PlayIcon, RefreshIcon } from "@/components/icons";
 import { useDisclosure, useShowNoti } from "@/hooks";
 import { cn } from "@/utils/cn";
 import { useEffect, useRef, useState } from "react";
@@ -164,6 +164,7 @@ const TrackTimeDialog = () => {
     <>
       {timer.isRunning ? (
         <Button
+          type="button"
           variant="icon"
           label={displayTime || "Stop"}
           onClick={stopTimer}
@@ -173,6 +174,7 @@ const TrackTimeDialog = () => {
       ) : isPaused ? (
         <div className="flex gap-2">
           <Button
+            type="button"
             variant="icon"
             icon={<PlayIcon />}
             label="Continue"
@@ -180,6 +182,7 @@ const TrackTimeDialog = () => {
             className="border-none bg-green-600 text-purple-50 py-1.5 rounded-full hover:bg-green-500 w-29"
           />
           <Button
+            type="button"
             variant="icon"
             icon={<RefreshIcon />}
             label="Reset"
@@ -189,6 +192,7 @@ const TrackTimeDialog = () => {
         </div>
       ) : (
         <Button
+          type="button"
           variant="icon"
           icon={<ClockIcon />}
           label={displayTime || "Track time"}
@@ -218,6 +222,7 @@ const TrackTimeDialog = () => {
                     label={`${time} min`}
                     onClick={() => handleStartTimer(time)}
                     className="rounded-full px-4"
+                    type="button"
                   />
                 ))}
               </div>
@@ -235,6 +240,7 @@ const TrackTimeDialog = () => {
                   placeholder="Minutes"
                 />
                 <Button
+                  type="button"
                   label="Start"
                   onClick={handleCustomTimeSubmit}
                   disabled={customMinutes === "" || customMinutes <= 0}
@@ -248,6 +254,7 @@ const TrackTimeDialog = () => {
                 Or just track time spent
               </p>
               <Button
+                type="button"
                 label="Start tracking"
                 onClick={handleStartTracking}
                 className="rounded-md"
