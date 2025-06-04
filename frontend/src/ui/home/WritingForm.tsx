@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import GenerateTopicDialog from "./GenerateTopicDialog";
+import TrackTimeDialog from "./TrackTimeDialog";
 
 const formSchema = z.object({
   topic: z.string().min(10, "Topic must be at least 10 characters"),
@@ -75,12 +77,17 @@ const WritingForm = ({
           {errors.topic && (
             <p className="text-red-500 text-xs mt-1">{errors.topic.message}</p>
           )}
+
+          <div className="buttons mt-2 flex gap-2">
+            <GenerateTopicDialog />
+            <TrackTimeDialog />
+          </div>
         </div>
 
         <div className="essay">
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="essay" className="block font-medium text-gray-700">
-              Your Essay
+              Essay
             </label>
             <span className="text-xs text-gray-500">
               {wordCount} words{" "}

@@ -137,9 +137,9 @@ async function getFeedbackHistory(req, res) {
     );
     const highest = Math.max(...scores);
     const lowest = Math.min(...scores);
-    const average = parseFloat(
-      (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
-    );
+    const sum = scores.reduce((a, b) => a + b, 0);
+    const rawAverage = sum / scores.length;
+    const average = Math.round(rawAverage * 2) / 2; // Rounds to nearest 0.5
     const total = scores.length;
 
     const result = histories.map((h) => ({
@@ -151,7 +151,7 @@ async function getFeedbackHistory(req, res) {
     }));
     const recent = result.slice(0, 5).map((item) => ({
       date: item.created_at,
-      score: item.score,
+      score: item.result?.band_scores?.overall?.score || 0,
     }));
 
     res.status(200).json({
