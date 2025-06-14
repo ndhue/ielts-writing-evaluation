@@ -17,7 +17,13 @@ export interface EvaluationFeedback {
   strategies_for_enhancement: string[];
 }
 
+export interface EssayImprovement {
+  comparison_summary: string;
+  improved_essay: string;
+}
+
 export interface EvaluationResult {
   band_scores: BandScores;
   feedback: EvaluationFeedback;
+  improvement: EssayImprovement;
 }

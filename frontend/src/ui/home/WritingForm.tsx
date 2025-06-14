@@ -1,7 +1,8 @@
 "use client";
 
+import { Evaluation } from "@/app/(main)/page";
 import { Button, LoadingDialog, Textarea } from "@/components";
-import { AIEvaluation, useEssayEvaluation } from "@/hooks/useEssayEvaluation";
+import { useEssayEvaluation } from "@/hooks/useEssayEvaluation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,7 +20,7 @@ type FormValues = z.infer<typeof formSchema>;
 const WritingForm = ({
   handleShowEvaluation,
 }: {
-  handleShowEvaluation: (result: AIEvaluation | null) => void;
+  handleShowEvaluation: (result: Evaluation | null) => void;
 }) => {
   const { submitEssay, isSubmitting, isAuthenticated } = useEssayEvaluation();
   const [wordCount, setWordCount] = useState(0);
@@ -53,7 +54,13 @@ const WritingForm = ({
 
   const onSubmit = (data: FormValues) => {
     submitEssay(data, {
-      onSuccess: (result) => handleShowEvaluation(result.evaluation),
+      onSuccess: (result) => {
+        handleShowEvaluation({
+          topic: data.topic,
+          essay: data.essay,
+          evaluation: result.evaluation,
+        });
+      },
     });
   };
 

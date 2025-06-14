@@ -27,6 +27,10 @@ export interface AIEvaluation {
     areas_for_improvement: string[];
     strategies_for_enhancement: string[];
   };
+  improvement: {
+    comparison_summary: string;
+    improved_essay: string;
+  };
 }
 
 export interface EssayResult {
@@ -186,9 +190,8 @@ export function useEssayEvaluation(essayId?: string) {
         }
 
         const result = await response.json();
-        const evaluationData = result.data.result || null;
 
-        return evaluationData as AIEvaluation;
+        return result.data as EssayResult;
       } catch (error) {
         console.error("Fetch evaluation error:", error);
         throw error;

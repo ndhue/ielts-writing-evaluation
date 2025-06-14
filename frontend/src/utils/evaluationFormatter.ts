@@ -32,7 +32,7 @@ export const formatEvaluation = (
 ): TransformedEvaluation => {
   const bandScores = rawData.band_scores || {};
   const feedback = rawData.feedback || {};
-  
+
   // Get band scores with proper fallbacks for different field names
   const taskResponse = bandScores.task_response || {};
   const coherenceAndCohesion = bandScores.coherence_and_cohesion || {};
