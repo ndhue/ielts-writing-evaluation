@@ -114,56 +114,112 @@ async function getEssayHistory(req, res) {
 }
 async function getFeedbackHistory(req, res) {
   const userId = req.user.userId;
+  const {
+    search,
+    sortBy = "created_at",
+    sortOrder = "desc",
+    fromDate,
+    toDate,
+    page = 1,
+    limit = 10,
+  } = req.query;
+
   try {
-    const histories = await EssayHistory.find({ user_id: userId })
+    let query = { user_id: userId };
+    let sort = {};
+
+    if (fromDate || toDate) {
+      query.created_at = {};
+      if (fromDate) query.created_at.$gte = new Date(fromDate);
+      if (toDate) {
+        const endDate = new Date(toDate);
+        endDate.setHours(23, 59, 59, 999);
+        query.created_at.$lte = endDate;
+      }
+    }
+
+    if (sortBy === "score") {
+      sort = { created_at: sortOrder === "asc" ? 1 : -1 };
+    } else {
+      sort = { created_at: sortOrder === "asc" ? 1 : -1 };
+    }
+
+    // Lấy tất cả để filter search và tính stats
+    let allHistories = await EssayHistory.find(query)
       .populate("essay_id")
       .populate("topic_id")
-      .sort({ created_at: -1 });
-    if (!histories.length) {
-      return res.status(200).json({
-        success: true,
-        data: [],
-        stats: {
-          highest: null,
-          lowest: null,
-          average: null,
-          total: 0,
-        },
-        recent: [],
+      .sort(sort);
+
+    if (search) {
+      const searchLower = search.toLowerCase();
+      allHistories = allHistories.filter((h) => {
+        const topicMatch = (h.topic_id?.topic || "")
+          .toLowerCase()
+          .includes(searchLower);
+        const essayMatch = (h.essay_id?.essay || "")
+          .toLowerCase()
+          .includes(searchLower);
+        return topicMatch || essayMatch;
       });
     }
-    const scores = histories.map(
+
+    if (sortBy === "score") {
+      allHistories.sort((a, b) => {
+        const scoreA = a.ai_output?.band_scores?.overall?.score || 0;
+        const scoreB = b.ai_output?.band_scores?.overall?.score || 0;
+        return sortOrder === "asc" ? scoreA - scoreB : scoreB - scoreA;
+      });
+    }
+
+    // Pagination
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const startIndex = (pageNum - 1) * limitNum;
+    const endIndex = startIndex + limitNum;
+    const paginated = allHistories.slice(startIndex, endIndex);
+
+    // Stats
+    const scores = allHistories.map(
       (h) => h.ai_output?.band_scores?.overall?.score || 0
     );
-    const highest = Math.max(...scores);
-    const lowest = Math.min(...scores);
-    const sum = scores.reduce((a, b) => a + b, 0);
-    const rawAverage = sum / scores.length;
-    const average = Math.round(rawAverage * 2) / 2; // Rounds to nearest 0.5
-    const total = scores.length;
+    const stats = scores.length
+      ? {
+          highest: Math.max(...scores),
+          lowest: Math.min(...scores),
+          average:
+            Math.round(
+              (scores.reduce((a, b) => a + b, 0) / scores.length) * 2
+            ) / 2,
+          total: scores.length,
+        }
+      : { highest: null, lowest: null, average: null, total: 0 };
 
-    const result = histories.map((h) => ({
+    const result = paginated.map((h) => ({
       id: h._id,
       topic: h.topic_id?.topic || "",
       essay: h.essay_id?.essay || "",
       result: h.ai_output,
       created_at: h.created_at,
     }));
-    const recent = result.slice(0, 5).map((item) => ({
+
+    const recentHistories = await EssayHistory.find({ user_id: userId })
+      .sort({ created_at: -1 })
+      .limit(5);
+    const recent = recentHistories.map((item) => ({
       date: item.created_at,
-      score: item.result?.band_scores?.overall?.score || 0,
+      score: item.ai_output?.band_scores?.overall?.score || 0,
     }));
 
     res.status(200).json({
       success: true,
       data: result,
-      stats: {
-        highest,
-        lowest,
-        average,
-        total,
-      },
+      stats,
       recent,
+      pagination: {
+        total: allHistories.length,
+        hasMore: endIndex < allHistories.length,
+        page: pageNum,
+      },
     });
   } catch (err) {
     console.error("Error fetching essay history:", err);

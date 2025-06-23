@@ -1,7 +1,12 @@
 "use client";
 
 import { useAuth, useShowNoti } from "@/hooks";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export interface EssaySubmission {
@@ -53,12 +58,24 @@ export interface RecentSubmission {
   score: number;
 }
 
+export interface EssayFilters {
+  search?: string;
+  sortBy?: "date" | "score";
+  sortOrder?: "asc" | "desc";
+  fromDate?: string;
+  toDate?: string;
+}
+
 export function useEssayEvaluation(essayId?: string) {
   const { authFetch, isAuthenticated } = useAuth();
   const { showError } = useShowNoti();
   const queryClient = useQueryClient();
   const [currentEvaluation, setCurrentEvaluation] =
     useState<AIEvaluation | null>(null);
+  const [filters, setFilters] = useState<EssayFilters>({
+    sortBy: "date",
+    sortOrder: "desc",
+  });
 
   // Submit essay mutation
   const submitEssayMutation = useMutation({
@@ -130,42 +147,45 @@ export function useEssayEvaluation(essayId?: string) {
     },
   });
 
-  // Get evaluation history
+  // Infinite query for evaluations
   const {
     data: evaluationsData,
     isLoading: isLoadingEvaluations,
     isError: isEvaluationsError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     refetch: refetchEvaluations,
-  } = useQuery({
-    queryKey: ["evaluations"],
-    queryFn: async () => {
+  } = useInfiniteQuery({
+    queryKey: ["evaluations", filters],
+    queryFn: async ({ pageParam = 1 }) => {
       if (!isAuthenticated) return null;
-
-      try {
-        const response = await authFetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/getFeedbackHistory`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch evaluations");
-        }
-
-        const result = await response.json();
-        return result;
-      } catch (error) {
-        console.error("Fetch evaluations error:", error);
-        throw error;
-      }
+      const queryParams = new URLSearchParams();
+      if (filters.search) queryParams.append("search", filters.search);
+      if (filters.sortBy) queryParams.append("sortBy", filters.sortBy);
+      if (filters.sortOrder) queryParams.append("sortOrder", filters.sortOrder);
+      if (filters.fromDate) queryParams.append("fromDate", filters.fromDate);
+      if (filters.toDate) queryParams.append("toDate", filters.toDate);
+      queryParams.append("page", pageParam.toString());
+      queryParams.append("limit", "10");
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/getFeedbackHistory?${queryParams}`;
+      const response = await authFetch(url);
+      if (!response.ok) throw new Error("Failed to fetch evaluations");
+      return await response.json();
     },
+    getNextPageParam: (lastPage) => {
+      if (!lastPage?.pagination?.hasMore) return undefined;
+      return (lastPage.pagination.page || 1) + 1;
+    },
+    initialPageParam: 1,
     enabled: isAuthenticated,
   });
 
-  // Extract data from the query result
-  const evaluations = (evaluationsData?.data as EssayResult[]) || [];
-  const evaluationStats =
-    (evaluationsData?.stats as EssaySubmissionResult) || null;
-  const recentEvaluations =
-    (evaluationsData?.recent as RecentSubmission[]) || [];
+  const evaluations: EssayResult[] =
+    evaluationsData?.pages.flatMap((p) => p?.data || []) || [];
+  const evaluationStats = evaluationsData?.pages[0]?.stats || null;
+  const recentEvaluations: RecentSubmission[] =
+    evaluationsData?.pages[0]?.recent || [];
 
   // Get a specific evaluation by ID
   const {
@@ -207,6 +227,14 @@ export function useEssayEvaluation(essayId?: string) {
     };
   }, [essayId]);
 
+  // Update filters function
+  const updateFilters = (newFilters: Partial<EssayFilters>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+    }));
+  };
+
   return {
     submitEssay: submitEssayMutation.mutate,
     isSubmitting: submitEssayMutation.isPending,
@@ -217,11 +245,16 @@ export function useEssayEvaluation(essayId?: string) {
     isLoadingEvaluations,
     isEvaluationsError,
     refetchEvaluations,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     evaluation,
     isLoadingEvaluation,
     isEvaluationError,
     evaluationError,
     isAuthenticated,
+    filters,
+    updateFilters,
   };
 }
 
