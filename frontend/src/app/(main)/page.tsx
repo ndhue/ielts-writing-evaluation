@@ -181,6 +181,29 @@ export default function Home() {
         finalY
       );
 
+      // Add Improvement Section if exists
+      const improvement = currentEvaluation.evaluation.improvement;
+      if (improvement?.improved_essay || improvement?.comparison_summary) {
+        doc.addPage();
+        y = 20;
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Improvement Section", marginX, y);
+        y += 10;
+
+        if (improvement.improved_essay) {
+          writeText("Improved Essay:", improvement.improved_essay, 8, 12);
+        }
+        if (improvement.comparison_summary) {
+          writeText(
+            "Comparison Summary:",
+            improvement.comparison_summary,
+            8,
+            12
+          );
+        }
+      }
+
       // Save file
       const date = new Date().toISOString().split("T")[0];
       const filename = `IELTS-Evaluation-${date}.pdf`;
@@ -353,9 +376,14 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-gray-800 mb-2">
                       {criterion.name}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {criterion.feedback}
-                    </p>
+                    {/* Render feedback as a list split by '-' */}
+                    <ul className="list-disc list-inside text-gray-600 leading-relaxed space-y-1">
+                      {criterion.feedback.split("-").map((item, idx) => {
+                        const trimmed = item.trim();
+                        if (!trimmed) return null;
+                        return <li key={idx}>{trimmed}</li>;
+                      })}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -472,6 +500,44 @@ export default function Home() {
               </div>
             )}
           </div>
+
+          {/* Improvement Section */}
+          {(currentEvaluation?.evaluation?.improvement.improved_essay ||
+            currentEvaluation?.evaluation?.improvement.comparison_summary) && (
+            <div className="bg-white rounded-xl shadow-md p-6 mb-10">
+              <h3 className="text-xl font-bold text-gray-800 mb-6">
+                Improvement Section
+              </h3>
+              {currentEvaluation.evaluation?.improvement.improved_essay && (
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-green-700 mb-2">
+                    Improved Essay
+                  </h4>
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-gray-800 leading-relaxed whitespace-pre-wrap text-justify">
+                      {currentEvaluation.evaluation.improvement?.improved_essay}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {currentEvaluation.evaluation?.improvement
+                ?.comparison_summary && (
+                <div>
+                  <h4 className="text-lg font-semibold text-blue-700 mb-2">
+                    Comparison Summary
+                  </h4>
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-gray-800 leading-relaxed whitespace-pre-wrap text-justify">
+                      {
+                        currentEvaluation.evaluation?.improvement
+                          .comparison_summary
+                      }
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </>

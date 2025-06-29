@@ -182,6 +182,37 @@ const Evaluation = () => {
         finalY
       );
 
+      // Add Improvement Section if exists
+      if (
+        evaluation.result.improvement.improved_essay ||
+        evaluation.result.improvement.comparison_summary
+      ) {
+        doc.addPage();
+        y = 20;
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Improvement Section", marginX, y);
+        y += 10;
+
+        if (evaluation.result.improvement.improved_essay) {
+          writeText(
+            "Improved Essay:",
+            evaluation.result.improvement.improved_essay,
+            8,
+            12
+          );
+        }
+
+        if (evaluation.result.improvement.comparison_summary) {
+          writeText(
+            "Comparison Summary:",
+            evaluation.result.improvement.comparison_summary,
+            8,
+            12
+          );
+        }
+      }
+
       // Save file
       const date = new Date().toISOString().split("T")[0];
       const filename = `IELTS-Evaluation-${date}-${id}.pdf`;
@@ -356,9 +387,14 @@ const Evaluation = () => {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               Overall Band Score: {overallScore}
             </h2>
-            <p className="text-gray-600 leading-relaxed">
-              {overallExplanation}
-            </p>
+            {/* Render feedback as a list split by '-' */}
+            <ul className="list-disc list-inside text-gray-600 leading-relaxed space-y-1">
+              {overallExplanation.split("-").map((item, idx) => {
+                const trimmed = item.trim();
+                if (!trimmed) return null;
+                return <li key={idx}>{trimmed}</li>;
+              })}
+            </ul>
           </div>
         </div>
       </div>
@@ -401,9 +437,14 @@ const Evaluation = () => {
                 <h3 className="text-xl font-bold text-gray-800 mb-2">
                   {criterion.name}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {criterion.feedback}
-                </p>
+                {/* Render feedback as a list split by '-' */}
+                <ul className="list-disc list-inside text-gray-600 leading-relaxed space-y-1">
+                  {criterion.feedback.split("-").map((item, idx) => {
+                    const trimmed = item.trim();
+                    if (!trimmed) return null;
+                    return <li key={idx}>{trimmed}</li>;
+                  })}
+                </ul>
               </div>
             </div>
           </div>
@@ -515,23 +556,23 @@ const Evaluation = () => {
       </div>
 
       {/* Improvement Section */}
-      {evaluation.result.improvement.improved_essay && (
+      {evaluation.result?.improvement?.improved_essay && (
         <div className="bg-white rounded-xl shadow-md p-6 mb-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Improved Version
           </h2>
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {evaluation.result.improvement.improved_essay}
+            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap text-justify">
+              {evaluation.result?.improvement.improved_essay}
             </p>
           </div>
 
-          {evaluation.result.improvement.comparison_summary && (
+          {evaluation.result?.improvement?.comparison_summary && (
             <div className="mt-6">
               <h3 className="text-xl font-bold text-gray-800 mb-3">
                 Comparison Summary
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed text-justify">
                 {evaluation.result.improvement.comparison_summary}
               </p>
             </div>
